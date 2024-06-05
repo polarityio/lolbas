@@ -1,0 +1,10 @@
+{
+  "name": "LOLBAS",
+  "version": "3.0.0",
+  "main": "./integration.js",
+  "private": true,
+  "dependencies": {
+    "postman-request": "^2.88.1-postman.32",
+    "node-schedule": "^2.1.1"
+  }
+}

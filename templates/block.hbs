@@ -1,0 +1,112 @@
+<div class='d-flex align-items-center justify-content-end copy-btn-container'>
+  <button class='btn copy-btn p-action' {{action 'copyData'}} title='Copy information to clipboard'>
+    {{fa-icon icon='clipboard' fixedWidth=true}}
+  </button>
+  <div class='copy-success-message {{if showCopyMessage "visible" "hidden"}}'>
+    {{fa-icon icon='check' fixedWidth=true class='copy-success-icon'}}
+    Copied information.
+  </div>
+</div>
+
+<div id={{concat 'cisa-vuln-container-' uniqueIdPrefix}}>
+  {{#if details.reloadRunning}}
+    <span>The LOLBAS integration is currently refreshing its data. Retry your search in a few
+      minutes.</span>
+  {{else}}
+    <a class='p-link' href='https://lolbas-project.github.io/#{{block.entity.value}}'>View on LOLBAS
+      Github Project Page
+      {{fa-icon icon='external-link-square' fixedWidth=true class='external-link'}}</a>
+
+    <div>
+      <span class='p-key'>Created Date:</span>
+      <span class='p-value'>{{details.Created}}</span>
+    </div>
+    <div>
+      <span class='p-key'>Author:</span>
+      <span class='p-value'>{{details.Author}}</span>
+    </div>
+
+    {{#each details.Commands as |command|}}
+      <div>
+        <span class='p-key'>Command:</span>
+        <span class='p-value'>{{command.Command}}</span>
+      </div>
+      <div>
+        <span class='p-key'>Description:</span>
+        <span class='p-value'>{{command.Description}}</span>
+      </div>
+      <div>
+        <span class='p-key'>Use Case:</span>
+        <span class='p-value'>{{command.Usecase}}</span>
+      </div>
+      <div>
+        <span class='p-key'>Category:</span>
+        <span class='p-value'>{{command.Category}}</span>
+      </div>
+      <div>
+        <span class='p-key'>Privileges:</span>
+        <span class='p-value'>{{command.Privileges}}</span>
+      </div>
+      <div>
+        <span class='p-key'>Mitre ID:</span>
+        <span class='p-value'>{{command.MitreID}}</span>
+      </div>
+      <div>
+        <span class='p-key'>Operating System:</span>
+        <span class='p-value'>{{command.OperatingSystem}}</span>
+      </div>
+
+      <div>
+        {{#each command.Tags as |tag|}}
+          <span class='p-key'>Tags:</span>
+          <span class='p-value'>{{tag.Type}}</span>
+        {{/each}}
+      </div>
+
+    {{/each}}
+
+    {{#if details.Full_Path}}
+      <div>
+        <span class='p-key'>Paths:</span>
+        <span class='p-value'>
+          {{#each details.Full_Path as |path index|}}
+            {{path.Path}}{{#if (not (eq (sub details.Full_Path.length 1) index))}},{{/if}}
+          {{/each}}
+        </span>
+      </div>
+    {{/if}}
+
+    {{#if detectionSigma}}
+      <div>
+        <span class='p-key'>Detections:</span>
+        <span class='p-value'>
+          {{#each detectionSigma as |detect index|}}
+            <a href='{{detect}}'>{{detect}}</a>{{#if
+              (not (eq (sub detectionSigma.length 1) index))
+            }},{{/if}}
+          {{/each}}
+        </span>
+      </div>
+    {{/if}}
+    {{#if detectionIOC}}
+      <div>
+        <span class='p-key'>IOCs:</span>
+        <span class='p-value'> {{join ', ' detectionIOC}}</span>
+      </div>
+    {{/if}}
+
+    {{#if details.Resources}}
+      <div>
+        <span class='p-key'>Resources:</span>
+        <span class='p-value'>
+          {{#each details.Resources as |resource index|}}
+            <a href='{{resource.Link}}'>{{resource.Link}}</a>{{#if
+              (not (eq (sub details.resources.length 1) index))
+            }},{{/if}}
+          {{/each}}
+        </span>
+      </div>
+    {{/if}}
+
+  {{/if}}
+</div>

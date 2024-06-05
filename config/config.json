@@ -1,0 +1,35 @@
+{
+  "name": "LOLBAS",
+  "acronym": "LOLBAS",
+  "description": "The goal of the LOLBAS project is to document every binary, script, and library that can be used for Living Off The Land techniques.",
+  "customTypes": [
+    {
+      "key": "allText",
+      "regex": "^[\\s\\S]{2,2048}"
+    }
+  ],
+  "defaultColor": "light-gray",
+  "onDemandOnly": true,
+  "styles": [
+    "./styles/int.less"
+  ],
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "logging": {
+    "level": "info"
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": ""
+  },
+  "options": []
+}
