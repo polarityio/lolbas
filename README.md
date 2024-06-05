@@ -1,4 +1,4 @@
-# Polarity DHS CISA Known Exploited Vulnerabilities Integration
+# Polarity LOLBAS Integration
 
 The Polarity - LOLBAS Integration returns information on Living off the Land Binaries, Scripts and Libraries. 
 
