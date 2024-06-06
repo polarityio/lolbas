@@ -2,7 +2,7 @@ module.exports = {
   name: 'LOLBAS',
   acronym: 'LOLBAS',
   description:
-    'Lookup information on executables documented as part of the Living of the Land Binaries (LOLBAS) project.',
+    'Lookup information on binaries, scripts, and libraries documented as part of the Living Off the Land Binaries (LOLBAS) project.',
   customTypes: [
     {
       key: 'executables',
