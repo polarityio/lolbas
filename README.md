@@ -1,6 +1,6 @@
 # Polarity LOLBAS Integration
 
-The Polarity - LOLBAS Integration returns information on Living off the Land Binaries, Scripts and Libraries. 
+The Polarity - Living Off the Land Binaries (LOLBAS) Integration returns information on Living Off The Land Binaries, Scripts and Libraries. 
 
 The integration requires network access to the LOLBAS JSON file available here: https://lolbas-project.github.io/api/lolbas.json
 
