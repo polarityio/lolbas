@@ -21,7 +21,7 @@ module.exports = {
     }
   },
   logging: {
-    level: 'trace'
+    level: 'info'
   },
   request: {
     cert: '',
