@@ -1,17 +1,58 @@
-.p-block{
-  margin-top: 5px;
-  background-color: #eee;
-  padding: 5px;
-  word-break: break-word;
-}
-
-.p-value {
+.p-block {
   word-break: break-word !important;
 }
 
-.external-link{
+.list-item{
+  border-bottom: 1px dashed #eee;
+  margin-bottom: 5px;
+  padding-bottom: 3px;
+}
+
+.external-link {
   font-size: 8px;
   margin-bottom: 1px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 3px 5px;
+  border-radius: 3px;
+  border: 1px solid #eee;
+  margin-bottom: 5px;
+  background-color: #eee;
+}
+
+code {
+  display: inline-block;
+}
+
+.resource-link {
+  margin-bottom: 5px;
+
+  &:last-child {
+    margin-bottom: 0px;
+  }
+}
+
+.card {
+  margin-bottom: 10px;
+  border-radius: 3px;
+  border: 1px solid #eee;
+
+  &:last-child {
+    margin-bottom: 0px;
+  }
+
+  .card-title {
+    border-bottom: 1px solid #eee;
+    margin: 0px;
+    padding: 3px 5px 3px 5px;
+    font-weight: 500;
+  }
+
+  .card-item {
+    padding: 3px 5px 3px 5px;
+  }
 }
 
 .copy-btn-container {
