@@ -22,7 +22,7 @@ dependency-reduced-pom.xml
 
 # Ignore local log files
 *.log
-package-lock.json
+
 # Ignore Generated HTML README Files
 README.html
 
