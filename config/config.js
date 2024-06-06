@@ -1,10 +1,12 @@
 module.exports = {
-  name: 'CSV to Integration',
-  acronym: 'CSV',
+  name: 'LOLBAS',
+  acronym: 'LOLBAS',
+  description:
+    'The goal of the LOLBAS project is to document every binary, script, and library that can be used for Living Off The Land techniques.',
   customTypes: [
     {
-      key: 'csvLookup',
-      regex: /\d{1,6}/
+      key: 'executables',
+      regex: /\b[a-zA-Z_\-\.0-9]{2,50}\.\S{3}\b/
     }
   ],
   defaultColor: 'light-gray',
@@ -26,7 +28,7 @@ module.exports = {
     key: '',
     passphrase: '',
     ca: '',
-    proxy: ""
+    proxy: ''
   },
   options: []
 };

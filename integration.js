@@ -4,12 +4,14 @@ const schedule = require('node-schedule');
 const requestCb = require('postman-request');
 const config = require('./config/config');
 const fs = require('fs');
+const path = require('path');
 const { promisify } = require('util');
 
 const EVERY_MIDNIGHT = '0 0 * * *';
 let requestDefault;
 let Logger;
-let lolbasLookupMap;
+let lolbasLookupByName;
+let lolbasLookupByMitreCode;
 let reloadRunning = false;
 let reloadScheduled = false;
 
@@ -69,20 +71,20 @@ function RequestException(message, meta) {
 async function loadList() {
   reloadRunning = true;
   try {
-    Logger.info('Loading Lolbas List');
     const requestOptions = {
       uri: 'https://lolbas-project.github.io/api/lolbas.json',
       json: true
     };
 
     const response = await requestDefault(requestOptions);
+
     if (response.statusCode === 200 && Array.isArray(response.body)) {
-      lolbasLookupMap = new Map();
-      response.body.forEach((names) => {
-        lolbasLookupMap.set(names.Name.toLowerCase(), names);
+      lolbasLookupByName = new Map();
+      response.body.forEach((exe) => {
+        enrichExe(exe);
+        lolbasLookupByName.set(exe.Name.toLowerCase(), exe);
       });
-      Logger.info(`Finished loading ${lolbasLookupMap.size} lolabs`);
-      //Logger.trace(lolbasLookupMap.names);
+      Logger.info(`Finished loading ${lolbasLookupByName.size} lolbas entries`);
     } else {
       Logger.error({ response }, 'Unexpected HTTP Status Code');
       throw new RequestException(
@@ -92,6 +94,44 @@ async function loadList() {
     }
   } finally {
     reloadRunning = false;
+  }
+}
+
+function enrichExe(exe) {
+  if (exe && Array.isArray(exe.Detection)) {
+    exe.Detection = exe.Detection.reduce((accum, detection) => {
+      for (let key in detection) {
+        let value = detection[key];
+
+        if(value === null){
+          // remove the Detection
+          delete detection[key];
+          return;
+        }
+
+        if (
+          key === 'Analysis' ||
+          key === 'Sigma' ||
+          key === 'Splunk' ||
+          key === 'Elastic' ||
+          key === 'BlockRule'
+        ) {
+          detection[key] = {
+            label: path.basename(value),
+            href: value,
+            isUrl: true
+          };
+        } else {
+          detection[key] = {
+            label: value,
+            isUrl: false
+          };
+        }
+      }
+
+      accum.push(detection);
+      return accum;
+    }, []);
   }
 }
 
@@ -112,6 +152,7 @@ function _getSummaryTags(searchResult) {
  * @param cb
  */
 async function doLookup(entities, options, cb) {
+  Logger.trace({ entities }, 'doLookup');
   let lookupResults = [];
 
   if (reloadScheduled === false) {
@@ -138,7 +179,7 @@ async function doLookup(entities, options, cb) {
       return;
     }
 
-    let searchResult = lolbasLookupMap.get(entity.value.toLowerCase());
+    let searchResult = lolbasLookupByName.get(entity.value.toLowerCase());
     Logger.trace({ searchResult }, 'Search Result');
     if (searchResult) {
       lookupResults.push({

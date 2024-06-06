@@ -1,9 +1,6 @@
 'use strict';
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
-  detectionIOC: '',
-  detectionSigma: '',
-
   timezone: Ember.computed('Intl', function () {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   }),
@@ -12,18 +9,6 @@ polarity.export = PolarityComponent.extend({
     this.set('uniqueIdPrefix', window.crypto.getRandomValues(array).join(''));
 
     this._super(...arguments);
-    this.set(
-      'detectionIOC',
-      this.get('details.Detection')
-        .filter((detection) => !!detection.IOC)
-        .map((detection) => detection.IOC)
-    );
-    this.set(
-      'detectionSigma',
-      this.get('details.Detection')
-        .filter((detection) => !!detection.Sigma)
-        .map((detection) => detection.Sigma)
-    );
   },
   actions: {
     copyData: function () {
@@ -31,7 +16,7 @@ polarity.export = PolarityComponent.extend({
         'afterRender',
         this,
         this.copyElementToClipboard,
-        `cisa-vuln-container-${this.get('uniqueIdPrefix')}`
+        `lolbas-container-${this.get('uniqueIdPrefix')}`
       );
 
       Ember.run.scheduleOnce('destroy', this, this.restoreCopyState);
