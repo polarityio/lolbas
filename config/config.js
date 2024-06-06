@@ -2,7 +2,7 @@ module.exports = {
   name: 'LOLBAS',
   acronym: 'LOLBAS',
   description:
-    'The goal of the LOLBAS project is to document every binary, script, and library that can be used for Living Off The Land techniques.',
+    'Lookup information on executables documented as part of the Living of the Land Binaries (LOLBAS) project.',
   customTypes: [
     {
       key: 'executables',
@@ -21,7 +21,7 @@ module.exports = {
     }
   },
   logging: {
-    level: 'info'
+    level: 'trace'
   },
   request: {
     cert: '',

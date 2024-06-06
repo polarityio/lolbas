@@ -21,7 +21,7 @@
         </a>
       </div>
       <div>
-        <span class="p-value">{{details.Description}}</span>
+        <span class="p-value p-block">{{details.Description}}</span>
       </div>
     </div>
 
@@ -34,22 +34,25 @@
       <span class="p-value">{{details.Author}}</span>
     </div>
 
-    <div class="p-title mb-2">{{fa-icon icon="info-circle" fixedWidth=true}} Commands</div>
+    <div class="p-title">{{fa-icon icon="terminal" fixedWidth=true}} Commands</div>
     {{#each details.Commands as |command|}}
       <div class="card">
         <div class="card-title">
-          {{command.Category}}
+          <div class="d-flex align-items-center justify-content-between">
+            <div>{{command.Category}}</div>
+            <div class="p-footnote">command</div>
+          </div>
         </div>
         <div class="card-item">
           <div>
-            <span class="p-value">{{command.Description}}</span>
+            <span class="p-value p-block">{{command.Description}}</span>
           </div>
-          <code class="mt-1 mb-1">
+          <code class="mt-1 mb-1 p-block">
             {{command.Command}}
           </code>
           <div>
             <span class="p-key">Use Case:</span>
-            <span class="p-value">{{command.Usecase}}</span>
+            <span class="p-value p-block">{{command.Usecase}}</span>
           </div>
           <div>
             <span class="p-key">Privilege required:</span>
@@ -79,27 +82,38 @@
     {{!-- Paths --}}
     {{#if details.Full_Path}}
       <div class="p-title">{{fa-icon icon="road" fixedWidth=true}} Paths</div>
+
       {{#each details.Full_Path as |path index|}}
-        <div class="p-value">
+        <div class="p-value list-item">
           {{path.Path}}
         </div>
       {{/each}}
+
     {{/if}}
 
-    {{!-- Detections --}}
     {{#if (gt details.Detection.length 0)}}
       <div class="p-title">{{fa-icon icon="location" fixedWidth=true}} Detections</div>
-      {{#each details.Detection as |detect|}}
-        {{#each-in detect as | key value |}}
-          <div>
-            <span class="p-key">{{key}}:</span>
-            {{#if value.isUrl}}
-              <a href="{{value.href}}" class="p-link">{{value.label}} {{fa-icon icon="external-link-square" fixedWidth=true class="external-link"}}</a>
-            {{else}}
-              <span class="p-value">{{value.label}}</span>
-            {{/if}}
+      {{#each details.Detection as |detectType|}}
+        <div class="card">
+          <div class="card-title">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>{{detectType.key}}</div>
+              <div class="p-footnote">detection</div>
+            </div>
+
           </div>
-        {{/each-in}}
+          <div class="card-item">
+            {{#each detectType.value as | detection |}}
+              <div>
+                {{#if detection.isUrl}}
+                  <a href="{{detection.href}}" class="p-link p-value">{{detection.label}} {{fa-icon icon="external-link-square" fixedWidth=true class="external-link"}}</a>
+                {{else}}
+                  <span class="p-value">{{detection.label}}</span>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
       {{/each}}
     {{/if}}
 
@@ -107,8 +121,8 @@
     {{#if details.Resources}}
       <div class="p-title">{{fa-icon icon="books" fixedWidth=true}} Resources</div>
       {{#each details.Resources as |resource index|}}
-        <div>
-          <a href="{{resource.Link}}" class="p-link">{{resource.Link}} {{fa-icon icon="external-link-square" fixedWidth=true class="external-link"}}</a>
+        <div class="list-item">
+          <a href="{{resource.Link}}" class="p-link p-value">{{resource.Link}} {{fa-icon icon="external-link-square" fixedWidth=true class="external-link"}}</a>
         </div>
       {{/each}}
     {{/if}}

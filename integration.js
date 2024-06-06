@@ -84,7 +84,7 @@ async function loadList() {
         enrichExe(exe);
         lolbasLookupByName.set(exe.Name.toLowerCase(), exe);
       });
-      Logger.info(`Finished loading ${lolbasLookupByName.size} lolbas entries`);
+      Logger.info(`Successfully loaded ${lolbasLookupByName.size} LOLBAS entries`);
     } else {
       Logger.error({ response }, 'Unexpected HTTP Status Code');
       throw new RequestException(
@@ -99,16 +99,17 @@ async function loadList() {
 
 function enrichExe(exe) {
   if (exe && Array.isArray(exe.Detection)) {
-    exe.Detection = exe.Detection.reduce((accum, detection) => {
+    const detectionMap = new Map();
+
+    exe.Detection.forEach((detection) => {
       for (let key in detection) {
         let value = detection[key];
 
-        if(value === null){
-          // remove the Detection
-          delete detection[key];
+        if (value === null) {
           return;
         }
 
+        let newObj;
         if (
           key === 'Analysis' ||
           key === 'Sigma' ||
@@ -116,33 +117,31 @@ function enrichExe(exe) {
           key === 'Elastic' ||
           key === 'BlockRule'
         ) {
-          detection[key] = {
+          newObj = {
             label: path.basename(value),
             href: value,
             isUrl: true
           };
         } else {
-          detection[key] = {
+          newObj = {
             label: value,
             isUrl: false
           };
         }
+        if (detectionMap.has(key)) {
+          detectionMap.get(key).push(newObj);
+        } else {
+          detectionMap.set(key, [newObj]);
+        }
       }
+    });
 
-      accum.push(detection);
-      return accum;
-    }, []);
+    exe.Detection = [...detectionMap].map(([key, value]) => ({ key, value }));
   }
 }
 
 function _getSummaryTags(searchResult) {
-  const tags = [];
-  let description = searchResult.Description;
-
-  tags.push(description);
-  Logger.trace('Tag data', tags);
-
-  return tags;
+  return [searchResult.Description];
 }
 
 /**
