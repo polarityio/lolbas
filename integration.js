@@ -6,14 +6,15 @@ const config = require('./config/config');
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
+const { promises: fsAsync } = require('fs');
 
 const EVERY_MIDNIGHT = '0 0 * * *';
 let requestDefault;
 let Logger;
 let lolbasLookupByName;
-let lolbasLookupByMitreCode;
 let reloadRunning = false;
 let reloadScheduled = false;
+let previousAutoUpdateSetting;
 
 function startup(logger) {
   Logger = logger;
@@ -68,7 +69,7 @@ function RequestException(message, meta) {
   this.meta = meta;
 }
 
-async function loadList() {
+async function loadListFromInternet() {
   reloadRunning = true;
   try {
     const requestOptions = {
@@ -84,7 +85,9 @@ async function loadList() {
         enrichExe(exe);
         lolbasLookupByName.set(exe.Name.toLowerCase(), exe);
       });
-      Logger.info(`Successfully loaded ${lolbasLookupByName.size} LOLBAS entries`);
+      Logger.info(
+        `Successfully loaded ${lolbasLookupByName.size} LOLBAS entries from https://lolbas-project.github.io/api/lolbas.json`
+      );
     } else {
       Logger.error({ response }, 'Unexpected HTTP Status Code');
       throw new RequestException(
@@ -92,6 +95,26 @@ async function loadList() {
         response
       );
     }
+  } finally {
+    reloadRunning = false;
+  }
+}
+
+async function loadListFromFile() {
+  reloadRunning = true;
+  try {
+    Logger.info(`Loading LOLBAS list from file`);
+    const dataFile = await fsAsync.readFile('./data/lolbas.json', 'utf-8');
+    const dataJson = JSON.parse(dataFile);
+
+    lolbasLookupByName = new Map();
+    dataJson.forEach((exe) => {
+      enrichExe(exe);
+      lolbasLookupByName.set(exe.Name.toLowerCase(), exe);
+    });
+    Logger.info(
+      `Successfully loaded ${lolbasLookupByName.size} LOLBAS entries from local 'data/lolbas.json' file`
+    );
   } finally {
     reloadRunning = false;
   }
@@ -144,6 +167,10 @@ function _getSummaryTags(searchResult) {
   return [searchResult.Description];
 }
 
+function autoUpdateChanged(options) {
+  return previousAutoUpdateSetting !== options.autoUpdate;
+}
+
 /**
  *
  * @param entities
@@ -154,15 +181,29 @@ async function doLookup(entities, options, cb) {
   Logger.trace({ entities }, 'doLookup');
   let lookupResults = [];
 
-  if (reloadScheduled === false) {
+  if (autoUpdateChanged(options)) {
+    Logger.info(`Auto Update setting changed to ${options.autoUpdate}`);
+    reloadScheduled = false;
+  }
+
+  if (options.autoUpdate && reloadScheduled === false) {
     try {
-      await loadList();
-      schedule.scheduleJob(EVERY_MIDNIGHT, loadList);
+      await loadListFromInternet();
+      schedule.scheduleJob(EVERY_MIDNIGHT, loadListFromInternet);
+      reloadScheduled = true;
+    } catch (err) {
+      return cb(errorToPojo(err));
+    }
+  } else if (options.autoUpdate === false && reloadScheduled === false) {
+    try {
+      await loadListFromFile();
       reloadScheduled = true;
     } catch (err) {
       return cb(errorToPojo(err));
     }
   }
+
+  previousAutoUpdateSetting = options.autoUpdate;
 
   entities.forEach((entity) => {
     if (reloadRunning) {
