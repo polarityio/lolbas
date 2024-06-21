@@ -30,5 +30,16 @@ module.exports = {
     ca: '',
     proxy: ''
   },
-  options: []
+  options: [
+    {
+      key: 'autoUpdate',
+      name: 'Enable Auto Update',
+      description:
+        'If checked, the integration will automatically update the LOLBAS data via the LOLBAS github page. This setting must be set to "Only admins can view and edit". The integration must have connectivity to `https://lolbas-project.github.io/api/lolbas.json` if this option is enabled.',
+      default: true,
+      type: 'boolean',
+      userCanEdit: false,
+      adminOnly: true
+    }
+  ]
 };
